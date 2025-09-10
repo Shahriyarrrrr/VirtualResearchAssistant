@@ -1,0 +1,171 @@
+﻿<Window x:Class="VirtualResearchAssistant.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Virtual Research Assistant"
+        Height="760" Width="1200"
+        Background="{DynamicResource VRA.Brush.Bg0}"
+        Foreground="{DynamicResource VRA.Brush.Text}"
+        FontFamily="{DynamicResource VRA.Font.Primary}">
+
+    <!-- Load the theme LOCALLY to this window -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Load your theme -->
+                <ResourceDictionary Source="pack://application:,,,/VRATheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Local resources -->
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
+    <!-- UI -->
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Grid.ColumnSpan="3"
+                Background="{DynamicResource VRA.Brush.Bg1}"
+                CornerRadius="14"
+                BorderBrush="{DynamicResource VRA.Brush.Stroke}" BorderThickness="1"
+                Padding="14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Virtual Research Assistant"
+                               Margin="0,0,12,0"
+                               FontSize="20" FontWeight="SemiBold"/>
+                    <Border Background="#263148" Padding="8,2" CornerRadius="8"
+                            BorderBrush="{DynamicResource VRA.Brush.Stroke}"
+                            BorderThickness="1" VerticalAlignment="Center">
+                        <TextBlock Text="Offline Search + OpenAI"
+                                   Foreground="{DynamicResource VRA.Brush.TextDim}"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{DynamicResource VRA.Button.Primary}" x:Name="BtnLoadPdf" Content="Load PDFs" Click="BtnLoadPdf_Click" Margin="0,0,8,0"/>
+                    <Button Style="{DynamicResource VRA.Button.Ghost}"   x:Name="BtnSummarize" Content="Summarize" Click="BtnSummarize_Click" Margin="0,0,8,0"/>
+                    <Button Style="{DynamicResource VRA.Button.Ghost}"   x:Name="BtnKeywords"  Content="Keywords"  Click="BtnKeywords_Click"  Margin="0,0,8,0"/>
+                    <Button Style="{DynamicResource VRA.Button.Ghost}"   x:Name="BtnQuiz"      Content="Generate Quiz" Click="BtnQuiz_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Left panel with PDFs + History -->
+        <Border Grid.Row="1" Grid.Column="0" Style="{DynamicResource VRA.Style.Card}">
+            <TabControl Background="Transparent">
+                <!-- PDFs Tab -->
+                <TabItem Header="PDFs">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <TextBlock Text="Loaded PDFs" FontWeight="SemiBold"/>
+                            <TextBlock Text="Drop files here or use Load PDFs"
+                                       Foreground="{DynamicResource VRA.Brush.TextDim}" FontSize="12"/>
+                        </StackPanel>
+                        <ListBox x:Name="ListPdfs"
+                                 Style="{DynamicResource VRA.ListBox}"
+                                 ItemContainerStyle="{DynamicResource VRA.ListBoxItem}"/>
+                    </DockPanel>
+                </TabItem>
+
+                <!-- History Tab -->
+                <TabItem Header="History">
+                    <DockPanel>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <Button Style="{DynamicResource VRA.Button.Ghost}" Content="Clear" Click="BtnHistoryClear_Click"/>
+                            <Button Style="{DynamicResource VRA.Button.Ghost}" Content="Copy Last" Margin="8,0,0,0" Click="BtnHistoryCopyLast_Click"/>
+                        </StackPanel>
+                        <ListBox x:Name="ListHistory"
+                                 Style="{DynamicResource VRA.ListBox}"
+                                 ItemContainerStyle="{DynamicResource VRA.ListBoxItem}"
+                                 DisplayMemberPath="ToString"/>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
+        </Border>
+
+        <Grid Grid.Row="1" Grid.Column="1"/>
+
+        <!-- Right panel -->
+        <Border Grid.Row="1" Grid.Column="2" Style="{DynamicResource VRA.Style.Card}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Ask row -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Background="{DynamicResource VRA.Brush.Bg1}" CornerRadius="10"
+                            BorderBrush="{DynamicResource VRA.Brush.Stroke}" BorderThickness="1">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text="" FontFamily="Segoe MDL2 Assets"
+                                       Margin="10,0" Foreground="{DynamicResource VRA.Brush.TextDim}"/>
+                            <TextBox x:Name="TxtQuestion" BorderThickness="0" Background="Transparent"
+                                     VerticalContentAlignment="Center" FontSize="14"
+                                     Style="{DynamicResource VRA.TextBox}"
+                                     ToolTip="Ask a question based on your PDFs…"
+                                     Foreground="{DynamicResource VRA.Brush.Text}"/>
+                        </DockPanel>
+                    </Border>
+
+                    <Button Grid.Column="1" Style="{DynamicResource VRA.Button.Primary}" x:Name="BtnAsk" Content="Ask" Margin="10,0,0,0" Click="BtnAsk_Click"/>
+                    <Button Grid.Column="2" Style="{DynamicResource VRA.Button.Ghost}" Content="Export PDF" Margin="10,0,0,0" Click="BtnExportPdf_Click"/>
+                    <Button Grid.Column="3" Style="{DynamicResource VRA.Button.Ghost}" Content="Export Word" Margin="10,0,0,0" Click="BtnExportWord_Click"/>
+
+                    <Border Grid.Column="4" Margin="10,0,0,0" Padding="10,8" CornerRadius="10"
+                            Background="#263148" BorderBrush="{DynamicResource VRA.Brush.Stroke}" BorderThickness="1">
+                        <TextBlock x:Name="LblStatus" Text="Ready" Foreground="{DynamicResource VRA.Brush.TextDim}"/>
+                    </Border>
+                </Grid>
+
+                <!-- Output -->
+                <Border Grid.Row="1" Background="{DynamicResource VRA.Brush.Bg1}" CornerRadius="12"
+                        BorderBrush="{DynamicResource VRA.Brush.Stroke}" BorderThickness="1" Padding="10">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBox x:Name="TxtOutput" AcceptsReturn="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Disabled" BorderThickness="0"
+                                 Background="Transparent" Foreground="{DynamicResource VRA.Brush.Text}"
+                                 FontFamily="Cascadia Code, Consolas, Menlo, monospace" FontSize="13"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="3" Background="{DynamicResource VRA.Brush.Bg1}">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource VRA.Brush.TextDim}"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ProgressBar Width="140" IsIndeterminate="{Binding IsBusy}" Height="12"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>
